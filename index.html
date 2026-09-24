@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>=LOVE 21作コンプリートクイズ</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; background: #fdf2f4; color: #333; }
+    .btn { background: #ff8fa3; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 20px; cursor: pointer; margin: 10px; }
+    .btn:active { background: #ff4d6d; }
+    .choice-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+    .choice-btn { width: 80%; max-width: 350px; background: white; border: 2px solid #ff8fa3; padding: 12px; margin: 5px; border-radius: 10px; font-size: 16px; cursor: pointer; }
+    .choice-btn:disabled { background: #eee; border-color: #ccc; cursor: not-allowed; }
+    #result { font-weight: bold; font-size: 18px; margin-top: 20px; line-height: 1.6; }
+    #player { display: none; }
+    .rank-text { font-size: 22px; color: #ff4d6d; font-weight: bold; margin-top: 15px; }
+  </style>
+</head>
+<body>
+
+  <h1>=LOVE 21作コンプリート・何番目シングル当てゲーム</h1>
+  <div id="quiz-box">
+    <h2 id="question-number">画面をタップしてスタート</h2>
+    <p id="question-text">全21枚の表題曲からランダムに5問出題します！</p>
+    
+    <div id="player"></div>
+
+    <button class="btn" id="start-btn" onclick="initGame()">ゲームを始める</button>
+
+    <div class="choice-container" id="choices"></div>
+    <div id="result"></div>
+    
+    <button class="btn" id="next-btn" onclick="nextQuestion()" style="display: none; background: #4caf50;">次の問題へ ➔</button>
+  </div>
+
+  <script>
+    const allSingles = [
+      { number: 1, title: "＝LOVE", videoId: "xyzX40_X27I", chorusStart: 62, releaseDate: "2017年9月6日" },
+      { number: 2, title: "僕らの制服クリスマス", videoId: "bY_k9N-V0M0", chorusStart: 51, releaseDate: "2017年12月6日" },
+      { number: 3, title: "手遅れcaution", videoId: "wMR8vL_p1bY", chorusStart: 68, releaseDate: "2018年5月16日" },
+      { number: 4, title: "Want you! Want you!", videoId: "pSg687XmZpU", chorusStart: 49, releaseDate: "2018年10月17日" },
+      { number: 5, title: "探せ ダイヤモンドリリー", videoId: "cmXOnLpSmsA", chorusStart: 59, releaseDate: "2019年4月24日" },
+      { number: 6, title: "ズルいよ ズルいね", videoId: "3m-pS6VpI94", chorusStart: 62, releaseDate: "2019年10月30日" },
+      { number: 7, title: "CAMEO", videoId: "aonIeVvscME", chorusStart: 68, releaseDate: "2020年7月8日" },
+      { number: 8, title: "青春“サブリミナル”", videoId: "bO_9wB_D_bU", chorusStart: 66, releaseDate: "2020年11月25日" },
+      { number: 9, title: "ウィークエンドシトロン", videoId: "K9gAhnIasL0", chorusStart: 58, releaseDate: "2021年8月25日" },
+      { number: 10, title: "The 5th", videoId: "Qp_977b3uOM", chorusStart: 69, releaseDate: "2021年12月15日" },
+      { number: 11, title: "あの子コンプレックス", videoId: "Shu6XoR7A3A", chorusStart: 66, releaseDate: "2022年5月25日" },
+      { number: 12, title: "Be Selfish", videoId: "sM77ZfGzW5A", chorusStart: 52, releaseDate: "2022年9月28日" },
+      { number: 13, title: "この空がトリガー", videoId: "h98O0S9u5Yk", chorusStart: 68, releaseDate: "2023年2月22日" },
+      { number: 14, title: "ナツマトペ", videoId: "khN6nZp_6FQ", chorusStart: 58, releaseDate: "2023年7月19日" },
+      { number: 15, title: "ラストノートしか知らない", videoId: "fK3YclzD3p0", chorusStart: 64, releaseDate: "2023年11月29日" },
+      { number: 16, title: "呪って呪って", videoId: "1PZzEALQYos", chorusStart: 56, releaseDate: "2024年3月6日" },
+      { number: 17, title: "絶対アイドル辞めないで", videoId: "4_D62Yg-XmE", chorusStart: 63, releaseDate: "2024年7月31日" },
+      { number: 18, title: "とくべチュ、して", videoId: "k_B-8pG1o_8", chorusStart: 50, releaseDate: "2025年2月12日" },
+      { number: 19, title: "ラブソングに襲われる", videoId: "n7u_96YwO9I", chorusStart: 55, releaseDate: "2025年7月16日" },
+      { number: 20, title: "劇薬中毒", videoId: "r2Y8q_mP1b0", chorusStart: 60, releaseDate: "2026年2月18日" },
+      { number: 21, title: "恋、はじめました。", videoId: "p5b9YgM_8X4", chorusStart: 58, releaseDate: "2026年8月26日" }
+    ];
+
+    let currentQuestions = []; 
+    let currentIdx = 0;
+    
+    // 💡 勉強ポイント①：正解数を数える「変数」を用意
+    let correctCount = 0; 
+    
+    var player;
+    let timer; 
+
+    var tag = document.createElement('script');
+    tag.src = "https://youtube.com";
+    var firstScriptTag = document.getElementsByTagName('script');
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '0', width: '0',
+        videoId: allSingles.videoId,
+        playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1 }
+      });
+    }
+
+    function initGame() {
+      document.getElementById('start-btn').style.display = "none";
+      correctCount = 0; // ゲーム開始時にスコアを0にリセット
+      const shuffled = [...allSingles].sort(() => 0.5 - Math.random());
+      currentQuestions = shuffled.slice(0, 5); 
+      currentIdx = 0;
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      clearTimeout(timer);
+      if (player) { player.pauseVideo(); }
+
+      const currentQuiz = currentQuestions[currentIdx];
+      
+      document.getElementById('question-number').innerText = `第 ${currentIdx + 1} 問 / 全5問`;
+      document.getElementById('question-text').style.fontSize = "24px";
+      document.getElementById('question-text').innerHTML = `<span style="color:#ff4d6d; font-weight:bold;">${currentQuiz.number}th シングル</span> は何でしょう？`;
+      
+      document.getElementById('result').innerText = "";
+      document.getElementById('next-btn').style.display = "none";
+
+      if (player) { 
+        player.cueVideoById({ videoId: currentQuiz.videoId }); 
+      }
+
+      let choiceTitles = [currentQuiz.title]; 
+      while (choiceTitles.length < 4) {
+        const randomSingle = allSingles[Math.floor(Math.random() * allSingles.length)];
+        if (!choiceTitles.includes(randomSingle.title)) {
+          choiceTitles.push(randomSingle.title);
+        }
+      }
+      choiceTitles.sort(() => 0.5 - Math.random());
+
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = "";
+      choiceTitles.forEach(title => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerText = `『 ${title} 』`;
+        btn.onclick = () => checkAnswer(title);
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedTitle) {
+      const buttons = document.querySelectorAll('.choice-btn');
+      buttons.forEach(b => b.disabled = true);
+
+      const currentQuiz = currentQuestions[currentIdx];
+      const resultDiv = document.getElementById('result');
+      
+      if (selectedTitle === currentQuiz.title) {
+        resultDiv.innerHTML = `<span style='color: green; font-size: 24px;'>⭕ 正解！</span><br>`;
+        // 💡 勉強ポイント②：正解したらカウントを1増やす
+        correctCount++; 
+      } else {
+        resultDiv.innerHTML = `<span style='color: red; font-size: 24px;'>❌ 不正解！</span><br>正解は <strong>『 ${currentQuiz.title} 』</strong> です！<br>`;
+      }
+
+      resultDiv.innerHTML += `📅 発売日：${currentQuiz.releaseDate}<br>🎵 サビを5秒間流すよ！`;
+
+      if (player) {
+        player.seekTo(currentQuiz.chorusStart);
+        player.playVideo();
+        
+        timer = setTimeout(() => {
+          player.pauseVideo();
+        }, 5000);
+      }
+
+      document.getElementById('next-btn').style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentIdx++;
+      if (currentIdx < currentQuestions.length) {
+        loadQuestion();
+      } else {
+        // 💡 勉強ポイント③：終了画面でスコアとランクを判定して表示（if文）
+        let rankName = "";
+        let rankComment = "";
+        
+        if (correctCount === 5) {
+          rankName = "👑 伝説のイコラブマスター";
+          rankComment = "全問正解！非の打ち所がない完璧なオタクです。指原Pもびっくり！";
+        } else if (correctCount >= 3) {
+          rankName = "💖 一人前のイコラブファン";
+          rankComment = "素晴らしい知識量です！あと一歩でカンペキ！";
+        } else if (correctCount >= 1) {
+          rankName = "🌱 イコラブ見習い";
+          rankComment = "ここからもっとMVを擦り切れるまで見ましょう！";
+        } else {
+          rankName = "😱 悔い改めよオタク";
+          rankComment = "全問不正解…！後悔しましたか？今すぐもう一度挑戦です！";
+        }
+
+        document.getElementById('quiz-box').innerHTML = `
+          <h2>🎉 クイズ終了！</h2>
+          <p style="font-size: 20px;">あなたの結果は <strong>5問中 ${correctCount} 問正解</strong> でした！</p>
+          <div class="rank-text">${rankName}</div>
+          <p style="padding: 0 20px;">${rankComment}</p>
+          <button class='btn' onclick='location.reload()'>もう一度遊ぶ</button>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
