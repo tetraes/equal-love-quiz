@@ -12,20 +12,23 @@
     .choice-btn { width: 80%; max-width: 350px; background: white; border: 2px solid #ff8fa3; padding: 12px; margin: 5px; border-radius: 10px; font-size: 16px; cursor: pointer; }
     .choice-btn:disabled { background: #eee; border-color: #ccc; cursor: not-allowed; }
     #result { font-weight: bold; font-size: 18px; margin-top: 20px; line-height: 1.6; }
-    #player { display: none; }
-    .rank-text { font-size: 22px; color: #ff4d6d; font-weight: bold; margin-top: 15px; }
+    
+    /* 💡 対策①：0サイズだとYouTube側がバグるため、1pxだけ画面に配置して見えなくします */
+    #player { width: 1px; height: 1px; opacity: 0.01; position: absolute; bottom: 0; left: 0; }
   </style>
 </head>
 <body>
 
   <h1>=LOVE 21作コンプリート・何番目シングル当てゲーム</h1>
   <div id="quiz-box">
-    <h2 id="question-number">画面をタップしてスタート</h2>
-    <p id="question-text">全21枚の表題曲からランダムに5問出題します！</p>
+    <h2 id="question-number">システム準備中...</h2>
+    <p id="question-text">YouTubeの準備をしています。少々お待ちください。</p>
     
+    <!-- YouTubeプレイヤーの設置場所 -->
     <div id="player"></div>
 
-    <button class="btn" id="start-btn" onclick="initGame()">ゲームを始める</button>
+    <!-- 最初はボタンを無効化しておき、準備ができたら押せるようにします -->
+    <button class="btn" id="start-btn" onclick="initGame()" disabled style="background: #ccc; cursor: not-allowed;">準備中...</button>
 
     <div class="choice-container" id="choices"></div>
     <div id="result"></div>
@@ -60,29 +63,49 @@
 
     let currentQuestions = []; 
     let currentIdx = 0;
-    
-    // 💡 勉強ポイント①：正解数を数える「変数」を用意
-    let correctCount = 0; 
-    
+    let correctCount = 0;
     var player;
     let timer; 
 
+    // YouTube APIのスクリプトを読み込む
     var tag = document.createElement('script');
     tag.src = "https://youtube.com";
     var firstScriptTag = document.getElementsByTagName('script');
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+    // 💡 対策②：確実にプレイヤーの初期化が終わるのを待つロジック
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        height: '0', width: '0',
-        videoId: allSingles.videoId,
-        playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1 }
+        height: '200',  // 0ではなくサイズを持たせる（CSSで隠す）
+        width: '320',
+        videoId: allSingles[0].videoId, // 最初の読み込み用
+        playerVars: { 
+          'autoplay': 0, 
+          'controls': 0, 
+          'disablekb': 1,
+          'playsinline': 1 // iPadなどのモバイルブラウザで全画面化するのを防ぐ
+        },
+        events: {
+          'onReady': onPlayerReady
+        }
       });
+    }
+
+    // 💡 対策③：YouTube側の読み込みが「完全に完了した瞬間」にボタンを有効化する
+    function onPlayerReady(event) {
+      const startBtn = document.getElementById('start-btn');
+      startBtn.disabled = false;
+      startBtn.style.background = "#ff8fa3";
+      startBtn.style.cursor = "pointer";
+      startBtn.innerText = "ゲームを始める";
+      
+      document.getElementById('question-number').innerText = "=LOVE クイズ";
+      document.getElementById('question-text').innerText = "全21枚の表題曲からランダムに5問出題します！";
     }
 
     function initGame() {
       document.getElementById('start-btn').style.display = "none";
-      correctCount = 0; // ゲーム開始時にスコアを0にリセット
+      correctCount = 0;
       const shuffled = [...allSingles].sort(() => 0.5 - Math.random());
       currentQuestions = shuffled.slice(0, 5); 
       currentIdx = 0;
@@ -91,7 +114,7 @@
 
     function loadQuestion() {
       clearTimeout(timer);
-      if (player) { player.pauseVideo(); }
+      if (player && typeof player.pauseVideo === 'function') { player.pauseVideo(); }
 
       const currentQuiz = currentQuestions[currentIdx];
       
@@ -102,7 +125,7 @@
       document.getElementById('result').innerText = "";
       document.getElementById('next-btn').style.display = "none";
 
-      if (player) { 
+      if (player && typeof player.cueVideoById === 'function') { 
         player.cueVideoById({ videoId: currentQuiz.videoId }); 
       }
 
@@ -135,7 +158,6 @@
       
       if (selectedTitle === currentQuiz.title) {
         resultDiv.innerHTML = `<span style='color: green; font-size: 24px;'>⭕ 正解！</span><br>`;
-        // 💡 勉強ポイント②：正解したらカウントを1増やす
         correctCount++; 
       } else {
         resultDiv.innerHTML = `<span style='color: red; font-size: 24px;'>❌ 不正解！</span><br>正解は <strong>『 ${currentQuiz.title} 』</strong> です！<br>`;
@@ -143,12 +165,13 @@
 
       resultDiv.innerHTML += `📅 発売日：${currentQuiz.releaseDate}<br>🎵 サビを5秒間流すよ！`;
 
-      if (player) {
+      // 💡 サビの再生処理
+      if (player && typeof player.seekTo === 'function') {
         player.seekTo(currentQuiz.chorusStart);
         player.playVideo();
         
         timer = setTimeout(() => {
-          player.pauseVideo();
+          if (player && typeof player.pauseVideo === 'function') { player.pauseVideo(); }
         }, 5000);
       }
 
@@ -160,7 +183,6 @@
       if (currentIdx < currentQuestions.length) {
         loadQuestion();
       } else {
-        // 💡 勉強ポイント③：終了画面でスコアとランクを判定して表示（if文）
         let rankName = "";
         let rankComment = "";
         
