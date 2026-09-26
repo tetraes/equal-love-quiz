@@ -1,135 +1,138 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>=LOVE 21作コンプリートクイズ</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; background: #fdf2f4; color: #333; }
-    .btn { background: #ff8fa3; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 20px; cursor: pointer; margin: 10px; }
-    .btn:active { background: #ff4d6d; }
-    .choice-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
-    .choice-btn { width: 80%; max-width: 350px; background: white; border: 2px solid #ff8fa3; padding: 12px; margin: 5px; border-radius: 10px; font-size: 16px; cursor: pointer; }
-    .choice-btn:disabled { background: #eee; border-color: #ccc; cursor: not-allowed; }
-    #result { font-weight: bold; font-size: 18px; margin-top: 20px; line-height: 1.6; }
-    
-    /* 💡 対策①：0サイズだとYouTube側がバグるため、1pxだけ画面に配置して見えなくします */
-    #player { width: 1px; height: 1px; opacity: 0.01; position: absolute; bottom: 0; left: 0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ff8fa3">
+<title>=LOVE 21作コンプリートクイズ</title>
+<style>
+  :root {
+    --bg: #fdf2f4;
+    --text: #333;
+    --card: #ffffff;
+    --pink: #ff8fa3;
+    --pink-dark: #ff4d6d;
+    --border: #ff8fa3;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #241318;
+      --text: #f3e3e8;
+      --card: #341c24;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #241318;
+    --text: #f3e3e8;
+    --card: #341c24;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
+    text-align: center;
+    padding: 24px 16px;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    min-height: 100%;
+  }
+  h1 { font-size: 20px; line-height: 1.4; }
+  .btn {
+    background: var(--pink); color: white; border: none;
+    padding: 12px 24px; font-size: 16px; border-radius: 20px;
+    cursor: pointer; margin: 10px;
+  }
+  .btn:active { background: var(--pink-dark); }
+  .choice-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+  .choice-btn {
+    width: 100%; max-width: 350px; background: var(--card); color: var(--text);
+    border: 2px solid var(--border); padding: 12px; margin: 5px;
+    border-radius: 10px; font-size: 16px; cursor: pointer;
+  }
+  .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  #result { font-weight: bold; font-size: 18px; margin-top: 20px; line-height: 1.6; }
+  #question-text { font-size: 22px; }
+  .rank-text { font-size: 24px; margin: 16px 0; font-weight: bold; color: var(--pink-dark); }
+
+  /* iframeは画面外に小さく配置し、音声だけ流す */
+  #player {
+    position: absolute; width: 2px; height: 2px; opacity: 0.01;
+    bottom: 0; left: 0; border: none; pointer-events: none;
+  }
+</style>
 </head>
 <body>
 
   <h1>=LOVE 21作コンプリート・何番目シングル当てゲーム</h1>
   <div id="quiz-box">
-    <h2 id="question-number">システム準備中...</h2>
-    <p id="question-text">YouTubeの準備をしています。少々お待ちください。</p>
-    
-    <!-- YouTubeプレイヤーの設置場所 -->
-    <div id="player"></div>
+    <h2 id="question-number">=LOVE クイズ</h2>
+    <p id="question-text">全21枚の表題曲からランダムに5問出題します！</p>
 
-    <!-- 最初はボタンを無効化しておき、準備ができたら押せるようにします -->
-    <button class="btn" id="start-btn" onclick="initGame()" disabled style="background: #ccc; cursor: not-allowed;">準備中...</button>
+    <iframe id="player" src="" allow="autoplay" title="preview"></iframe>
+
+    <button class="btn" id="start-btn" onclick="initGame()">ゲームを始める</button>
 
     <div class="choice-container" id="choices"></div>
     <div id="result"></div>
-    
+
     <button class="btn" id="next-btn" onclick="nextQuestion()" style="display: none; background: #4caf50;">次の問題へ ➔</button>
   </div>
 
   <script>
     const allSingles = [
-      { number: 1, title: "＝LOVE", videoId: "xyzX40_X27I", chorusStart: 62, releaseDate: "2017年9月6日" },
-      { number: 2, title: "僕らの制服クリスマス", videoId: "bY_k9N-V0M0", chorusStart: 51, releaseDate: "2017年12月6日" },
-      { number: 3, title: "手遅れcaution", videoId: "wMR8vL_p1bY", chorusStart: 68, releaseDate: "2018年5月16日" },
-      { number: 4, title: "Want you! Want you!", videoId: "pSg687XmZpU", chorusStart: 49, releaseDate: "2018年10月17日" },
-      { number: 5, title: "探せ ダイヤモンドリリー", videoId: "cmXOnLpSmsA", chorusStart: 59, releaseDate: "2019年4月24日" },
-      { number: 6, title: "ズルいよ ズルいね", videoId: "3m-pS6VpI94", chorusStart: 62, releaseDate: "2019年10月30日" },
-      { number: 7, title: "CAMEO", videoId: "aonIeVvscME", chorusStart: 68, releaseDate: "2020年7月8日" },
-      { number: 8, title: "青春“サブリミナル”", videoId: "bO_9wB_D_bU", chorusStart: 66, releaseDate: "2020年11月25日" },
-      { number: 9, title: "ウィークエンドシトロン", videoId: "K9gAhnIasL0", chorusStart: 58, releaseDate: "2021年8月25日" },
-      { number: 10, title: "The 5th", videoId: "Qp_977b3uOM", chorusStart: 69, releaseDate: "2021年12月15日" },
-      { number: 11, title: "あの子コンプレックス", videoId: "Shu6XoR7A3A", chorusStart: 66, releaseDate: "2022年5月25日" },
-      { number: 12, title: "Be Selfish", videoId: "sM77ZfGzW5A", chorusStart: 52, releaseDate: "2022年9月28日" },
-      { number: 13, title: "この空がトリガー", videoId: "h98O0S9u5Yk", chorusStart: 68, releaseDate: "2023年2月22日" },
-      { number: 14, title: "ナツマトペ", videoId: "khN6nZp_6FQ", chorusStart: 58, releaseDate: "2023年7月19日" },
-      { number: 15, title: "ラストノートしか知らない", videoId: "fK3YclzD3p0", chorusStart: 64, releaseDate: "2023年11月29日" },
-      { number: 16, title: "呪って呪って", videoId: "1PZzEALQYos", chorusStart: 56, releaseDate: "2024年3月6日" },
-      { number: 17, title: "絶対アイドル辞めないで", videoId: "4_D62Yg-XmE", chorusStart: 63, releaseDate: "2024年7月31日" },
-      { number: 18, title: "とくべチュ、して", videoId: "k_B-8pG1o_8", chorusStart: 50, releaseDate: "2025年2月12日" },
-      { number: 19, title: "ラブソングに襲われる", videoId: "n7u_96YwO9I", chorusStart: 55, releaseDate: "2025年7月16日" },
-      { number: 20, title: "劇薬中毒", videoId: "r2Y8q_mP1b0", chorusStart: 60, releaseDate: "2026年2月18日" },
-      { number: 21, title: "恋、はじめました。", videoId: "p5b9YgM_8X4", chorusStart: 58, releaseDate: "2026年8月26日" }
+      { number: 1, title: "＝LOVE", videoId: "xOAaBsPaPpY", chorusStart: 62, releaseDate: "2017年9月6日" },
+      { number: 2, title: "僕らの制服クリスマス", videoId: "YIjPbF-dKQA", chorusStart: 51, releaseDate: "2017年12月6日" },
+      { number: 3, title: "手遅れcaution", videoId: "w0N0TiOlAY0", chorusStart: 68, releaseDate: "2018年5月16日" },
+      { number: 4, title: "Want you! Want you!", videoId: "Bot92Nn-ozk", chorusStart: 49, releaseDate: "2018年10月17日" },
+      { number: 5, title: "探せ ダイヤモンドリリー", videoId: "t5r0rNwjXQU", chorusStart: 59, releaseDate: "2019年4月24日" },
+      { number: 6, title: "ズルいよ ズルいね", videoId: "J5eTB_0SEeg", chorusStart: 62, releaseDate: "2019年10月30日" },
+      { number: 7, title: "CAMEO", videoId: "iEYwHScdJFQ", chorusStart: 68, releaseDate: "2020年7月8日" },
+      { number: 8, title: "青春“サブリミナル”", videoId: "8id6i_QeNJM", chorusStart: 66, releaseDate: "2020年11月25日" },
+      { number: 9, title: "ウィークエンドシトロン", videoId: "skgh3juWdFU", chorusStart: 58, releaseDate: "2021年8月25日" },
+      { number: 10, title: "The 5th", videoId: "Q1-yYjZqk7o", chorusStart: 69, releaseDate: "2021年12月15日" },
+      { number: 11, title: "あの子コンプレックス", videoId: "ShbfYtAPXuI", chorusStart: 66, releaseDate: "2022年5月25日" },
+      { number: 12, title: "Be Selfish", videoId: "suf7S4AKdmY", chorusStart: 52, releaseDate: "2022年9月28日" },
+      { number: 13, title: "この空がトリガー", videoId: "20QJax8CwQo", chorusStart: 68, releaseDate: "2023年2月22日" },
+      { number: 14, title: "ナツマトペ", videoId: "Y1Bboo5KXL4", chorusStart: 58, releaseDate: "2023年7月19日" },
+      { number: 15, title: "ラストノートしか知らない", videoId: "C8WMX7dEH7Y", chorusStart: 64, releaseDate: "2023年11月29日" },
+      { number: 16, title: "呪って呪って", videoId: "cyRZGtNx_a4", chorusStart: 56, releaseDate: "2024年3月6日" },
+      { number: 17, title: "絶対アイドル辞めないで", videoId: "17NBPoc78oM", chorusStart: 63, releaseDate: "2024年7月31日" },
+      { number: 18, title: "とくべチュ、して", videoId: "F3P8vcZkIh4", chorusStart: 50, releaseDate: "2025年2月12日" },
+      { number: 19, title: "ラブソングに襲われる", videoId: "_cf4UTe1qrY", chorusStart: 55, releaseDate: "2025年7月16日" },
+      { number: 20, title: "劇薬中毒", videoId: "Bco8bY9r_H4", chorusStart: 60, releaseDate: "2026年2月18日" },
+      { number: 21, title: "恋、はじめました。", videoId: "ikFaEAlO5N0", chorusStart: 58, releaseDate: "2026年8月26日" }
     ];
 
-    let currentQuestions = []; 
+    let currentQuestions = [];
     let currentIdx = 0;
     let correctCount = 0;
-    var player;
-    let timer; 
-
-    // YouTube APIのスクリプトを読み込む
-    var tag = document.createElement('script');
-    tag.src = "https://youtube.com";
-    var firstScriptTag = document.getElementsByTagName('script');
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // 💡 対策②：確実にプレイヤーの初期化が終わるのを待つロジック
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        height: '200',  // 0ではなくサイズを持たせる（CSSで隠す）
-        width: '320',
-        videoId: allSingles[0].videoId, // 最初の読み込み用
-        playerVars: { 
-          'autoplay': 0, 
-          'controls': 0, 
-          'disablekb': 1,
-          'playsinline': 1 // iPadなどのモバイルブラウザで全画面化するのを防ぐ
-        },
-        events: {
-          'onReady': onPlayerReady
-        }
-      });
-    }
-
-    // 💡 対策③：YouTube側の読み込みが「完全に完了した瞬間」にボタンを有効化する
-    function onPlayerReady(event) {
-      const startBtn = document.getElementById('start-btn');
-      startBtn.disabled = false;
-      startBtn.style.background = "#ff8fa3";
-      startBtn.style.cursor = "pointer";
-      startBtn.innerText = "ゲームを始める";
-      
-      document.getElementById('question-number').innerText = "=LOVE クイズ";
-      document.getElementById('question-text').innerText = "全21枚の表題曲からランダムに5問出題します！";
-    }
 
     function initGame() {
       document.getElementById('start-btn').style.display = "none";
       correctCount = 0;
       const shuffled = [...allSingles].sort(() => 0.5 - Math.random());
-      currentQuestions = shuffled.slice(0, 5); 
+      currentQuestions = shuffled.slice(0, 5);
       currentIdx = 0;
       loadQuestion();
     }
 
     function loadQuestion() {
-      clearTimeout(timer);
-      if (player && typeof player.pauseVideo === 'function') { player.pauseVideo(); }
+      // 前の問題の再生を確実に止める
+      document.getElementById('player').src = "";
 
       const currentQuiz = currentQuestions[currentIdx];
-      
+
       document.getElementById('question-number').innerText = `第 ${currentIdx + 1} 問 / 全5問`;
-      document.getElementById('question-text').style.fontSize = "24px";
-      document.getElementById('question-text').innerHTML = `<span style="color:#ff4d6d; font-weight:bold;">${currentQuiz.number}th シングル</span> は何でしょう？`;
-      
+      document.getElementById('question-text').innerHTML = `<span style="color:var(--pink-dark); font-weight:bold;">${currentQuiz.number}th シングル</span> は何でしょう？`;
+
       document.getElementById('result').innerText = "";
       document.getElementById('next-btn').style.display = "none";
 
-      if (player && typeof player.cueVideoById === 'function') { 
-        player.cueVideoById({ videoId: currentQuiz.videoId }); 
-      }
-
-      let choiceTitles = [currentQuiz.title]; 
+      let choiceTitles = [currentQuiz.title];
       while (choiceTitles.length < 4) {
         const randomSingle = allSingles[Math.floor(Math.random() * allSingles.length)];
         if (!choiceTitles.includes(randomSingle.title)) {
@@ -155,25 +158,20 @@
 
       const currentQuiz = currentQuestions[currentIdx];
       const resultDiv = document.getElementById('result');
-      
+
       if (selectedTitle === currentQuiz.title) {
-        resultDiv.innerHTML = `<span style='color: green; font-size: 24px;'>⭕ 正解！</span><br>`;
-        correctCount++; 
+        resultDiv.innerHTML = `<span style='color: #2e9e3f; font-size: 24px;'>⭕ 正解！</span><br>`;
+        correctCount++;
       } else {
-        resultDiv.innerHTML = `<span style='color: red; font-size: 24px;'>❌ 不正解！</span><br>正解は <strong>『 ${currentQuiz.title} 』</strong> です！<br>`;
+        resultDiv.innerHTML = `<span style='color: #e0433a; font-size: 24px;'>❌ 不正解！</span><br>正解は <strong>『 ${currentQuiz.title} 』</strong> です！<br>`;
       }
 
       resultDiv.innerHTML += `📅 発売日：${currentQuiz.releaseDate}<br>🎵 サビを5秒間流すよ！`;
 
-      // 💡 サビの再生処理
-      if (player && typeof player.seekTo === 'function') {
-        player.seekTo(currentQuiz.chorusStart);
-        player.playVideo();
-        
-        timer = setTimeout(() => {
-          if (player && typeof player.pauseVideo === 'function') { player.pauseVideo(); }
-        }, 5000);
-      }
+      // start/endパラメータで自動的にサビ5秒だけ再生して止まる
+      const end = currentQuiz.chorusStart + 5;
+      document.getElementById('player').src =
+        `https://www.youtube.com/embed/${currentQuiz.videoId}?start=${currentQuiz.chorusStart}&end=${end}&autoplay=1&controls=0&modestbranding=1&rel=0`;
 
       document.getElementById('next-btn').style.display = "inline-block";
     }
@@ -183,9 +181,10 @@
       if (currentIdx < currentQuestions.length) {
         loadQuestion();
       } else {
+        document.getElementById('player').src = "";
         let rankName = "";
         let rankComment = "";
-        
+
         if (correctCount === 5) {
           rankName = "👑 伝説のイコラブマスター";
           rankComment = "全問正解！非の打ち所がない完璧なオタクです。指原Pもびっくり！";
