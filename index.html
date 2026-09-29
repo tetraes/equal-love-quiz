@@ -106,6 +106,25 @@
     align-items: center;
     justify-content: center;
   }
+
+  .home-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .home-logo {
+    display: flex; align-items: center; gap: 4px;
+    font-weight: bold; font-size: 13px; color: var(--pink-dark);
+    background: var(--card); border: 1px solid var(--pink);
+    border-radius: 14px; padding: 4px 10px;
+  }
+  .yt-link-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #ff0000; color: #fff; text-decoration: none;
+    font-size: 12px; font-weight: bold;
+    border-radius: 14px; padding: 6px 10px;
+  }
+  .mode-card.timeattack { border-color: #ffb020; }
+  #singles-submenu { display: none; flex-direction: column; align-items: center; gap: 12px; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -113,14 +132,18 @@
   <button id="home-btn" onclick="goHome()" title="ホームに戻る">🏠</button>
 
   <div id="home-screen">
+    <div class="home-topbar">
+      <span class="home-logo">💗 =LOVEクイズ</span>
+      <a class="yt-link-btn" href="https://www.youtube.com/@equallove_" target="_blank" rel="noopener">▶ 公式YouTube</a>
+    </div>
     <img class="home-heart" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAAB/CAYAAAANSjuoAAAgAElEQVR4nO2deXhb5Z3vv2fTkWRJdpxYcbBjO6vtEJI4QEJCCSEsCSEQAqEhkClMp7S9U3WY7U6XmV5f3U47c++002XcDrfD0AJtmXJpAmEJBEiALJAFyGo7ieN4X+Rdu856/5AtJEtH0llkOySf58nzxOe873t+ln96z/v+tpfAJOF97uVrCav5QdJhu5+0580HCIIwMSxhZmnCxBBj7WRBhMxxEiJ8RAoGRyCIQ7LAt4gDI//sePS+DyZL/onA43KXA7gJwDL2+sUbTIvmLyRY1kyYTSRBUbF2Ms/LcjAsyOFIQOb4ISkQuihHIgfkYPiPji/df3YyZCcyNzEG7+92V5I265OkLe8OsrBgDmmz0nrHlEZ8nDgw3CANe38p8/zTjh2bJSNknSw8LjdBWNi1cijyAIANAOYDgHlVDcwrlmoaU/IHBWlwuEXyB9+R/IF/czx6X72BIiuSU8XyuNzFAB6ybb27lr7GOR1E7h4n+QKC0NW7V+of+obj8QdacvagHOBxuQsBfAXAnwMoj92gKFjvWA1T1TxjHiTLEAeGRsT+obclX+D7jkfuPWXMwMkY/pf2uNwkot+2JwBsopzTafv2e41+jCJyOCL7fr/7Z5Iv8I/OutqBCXuwBjwu93QA/x2AC0Be/D3SZkXePetAFc/IzcNlGUJ3X484MPSUHAz9wLFjs2Dk8IYp1sD36yxi78AjAP4WQNXYdcstN4Jdfq1Rj8lI6OBxRD4+AwAjAGoB/MJZV2voh6YXj8tNM/Nm/5LMszwuef0M39KVcJ8uKUbexrUgrOYJkUcKBAWhvfv30ojvG44dm/1GjKlbsYZ+8gxJsMzPxb6hB8W+oeLE0Qk4vrwVpC1PobexiJ5++P7rdUCW4y+fAPC4s6725IQIkQGPy70UwG9MVRXL6NJiRE6eg9g3FL1JEDCvWALzymXI5bJBCSkQEoSWjqf51k7XtCcfE/WMpUt6j8u9DMD/JazmFXIwnHSfLpkJ29a79Twia2RegO/5XZB8gVS3OQDfAfATZ12tnKpBrvG43ASAvwLwTwBMAEBYzRj73EiHDdb1t4C+ZuZkiJeA2D8UENq7n7B/8e4XtI6hSbE8LjcDwA3g7wBQSu2s61bBdF2lRtHUEdr3ISKnz2VqthPR2cs3ASLF8LjcdgC/AfBAqvvs0iqYb74BBKN7o2wYQmePHHh134/kCPf3zrpaXm1/1YrlcbnnAngBwIpMbR1PbANptah9hGqEzl74X9qTbfOTAO5x1tV25lCkGB6XuwTA6wCS7AV0cREsa1eCmpmjBboGZF5A+NDHiJxqHFtSHAWw3VlX26xmHFWK5XG51yD6rZ+eqS01cwbsD29SM7w2RBHe3+2GNDSiplcHgNucdbVNOZIKAOBxuecD2A+gNP46abfBfPNymCrn5vLxqhHauhB89zAkb9L6fRDAFmddbdYG6awVa+hfn/4+6bB9Vxr2keN3MeNha6rAlJeCLi9N284IwkdPIvzhp4pyQJYhDfuQQuYeAHc562pP50Iuj8t9HYC9bE1VcYIMBAF2aRXY5YtB2idmU5MJOcIhdOAYuLMXACh+bjyiy4jfZzMmmU0jj8v9KGFi/p6aMY2UAqHMgobCoJy5n94lXwCRY8o2PjkUBjVjGhRkLgawZ3RWMZTRMfcAKE6SQZYROdEA77N/ROjAMcic6uWLofDN7fD99uWYUgGKnxsD4HmPy/1oNuNmnLE8LvcWAC8BION3MWkHNbPI/+rDOd8yB17fD76pNb0smWVuBrDKWVfrMUImj8vtBPAhgNh7Lp0MpM0Ky+2rwVTkfnaPRw6FEXr/KLhzqZdOaWSWADzkrKvdmW78tH95j8u9EsB7AFRZ6pgFFcjbuFZNF9UIHT3w//FNo4b7CNE1V+ZvTRo8LrcZ0TXVTWr7skurYVlzI0Bm9RLRBX/+EoLvHYEc0vzrhgGsddbVHlFqoPhbeFzumYgu1FWbf+nS4syNdBI6eNzI4W4C8JQB4zwFDUoFAJGTDfDvfEvPHzsjUiCEwGv7ENjzvt7nmAmL+WXv73YrulRSKtaoMe83AK7R8tRcG/n4Cy0Qe/uNHvYxj8v9Na2dR/s+pkeAMbOJ5A/qGSYlXH0TfM/vAn+xzZDxrOtWFdOlxftHdSWJlBf9r+57Qxoaulv0DKbaTSUwfgdBsCbkf/0RA0RXQJLgff5lSMNeRRnUyDuOIIDlzrrajJbWeDwudyWAT9iaKqsRcpAOG2xbN4C029SIkRLJF0DwnUMQ2pLl0fq5EVYrrHd+AQDA1V94zrb5jqQvVNKM5f3d7kpmXtndpkULlXZTCYzfQdCznBn76IFrbE5QqlQypCNDWyuAFzwutylbeUbbvgDAapQcktcP/869ul+LQncffM+/nFKpMsmg1BY0Dcttn73tmXnlf+J9dtfC8e2TfAhU0fQ/EgwDIp8BNa3gMwepAlxjC/i2ntgOIqdWZFlGOIV5YbwM6ciibQ2A743+y4bvjfYxVA5p2IvAq/tge3ADQGlb0FNFhQBNAXxqk4ZaeYXufuRtvhME/ZnaEKyJoGY5dwJYHN8+QWLvc7vWMOXXxBZklnWrQObbMz40XrCcxQ8B4BovJs1WqWTIRBZtv+VxuRdlajTa5lu5kkPo9iD43kdZjzcegqZgzhCylLW8BAHLrStBTctPusWUX3Ot97lda+KvJSgWVex8Kn67S7Am5N1zW4KGZoJ2ZvT2aCbVbJUjGAD/rrQwBWIbnH8fbZszuDPnwV9o0dzftLQaBJv1m10Ry5obwcyZnfomSYKa5UzYVcc0xvvcy/Po2cXV4/tQRYWwrr8FQld3xoUemWcFkSOnM3+xDdKQ18iFeqa2awBsB5DShcHMKXFDltfkWAYAQHDfh3CUzNT02RIMDdOiBQBEzXKYb7gO7LL0Ezgze1a19zc75zoef6AZiJuxyGmOHynNTMz8cjDlpRkXeuT0grQP10PkkzMADF2oZ9P2Bx6Xmx3fdvCHv8yjS2d+e4JkgByOIPT+0Yz9lWCXVGqWg11SBfPN12d+CEWBnF7w47EfY5pEFRWuT9ePLi9F5GRD2sU8lSPFEnv6IHRFPS4GL9Qzta1ANB79x/EXha6+r4vDPmaCZIjeO38JpiWVoEvUG5/JAgckbxChwydUyWGqnAvLmozRUTEo5/SYDpEA4H3htXXU9GkZ51l2aTUst65Q9AFS06dlLYQaIqcaE342eKGeqe3feVzu2Gcz+v9vTbAMAIDQB8eyHmc8pur5quQw11yrSqkAgCossHhfeG0dMKpYpM36zWw7s8sWRQP9qeTAUXKaQ5Ug2SCHwuDOtxg+rgqcAOIt8l8DUDQZgoieAfDN2iznzIKKrPyQBEMjb+NasDdcp+k5pC3vSWBMsfIdN6vpzMwvh+3he0AWJCpSNqYJtXD1TYCoK67fCP7G43LTHpebBvA3kymI1p0xwZoy+nCp6QWwbdsUVUKNkA7bKgCgvb99haZmFKg2PlEzCmF/5F7wzW0QezyQfAGQeVbNAikhDQ9nbDMBO8VSvqXrwdHLivEtE7VjFXr6QBernzSZ+eUJVvjYuCN+UNMLYb5pGZDiTaQGasa0Gf5db5tIgmXvIhhGU+AUwTAwVc4De8NSkHbjZys5GILQmznndIJ2il9D4itxsuQAd7IxQ4/UjI/5kkNhMOUlsKxZGd356VQqACBMDAFZ3kr4d+/7qal63pN6BxSHRlJaZfUQOnAMkU+yq2mRbRBiLttOlBwEQ8PxxDYQjHrbrO93r0DsHwI9exbMNy4BPXuW6jEywTU0/ZwmGHq5IaMJBq+DRCkhXDYTk7FLmyw5ZF4Af7FNU00Hy60rQdqsSetjIyFMpuU0YWYrDBlNNLbQC9/SATnCqetEkiBt1pgLQ45wkAMhyJO/+DccvqlVk2JNRBAmwZrKaNKRl9s4F43w5y+lvD5+IUuXFoOZVwa6dBaowvzkLbUsQ/IHwV9qh9DcDr6ta3wKfspx0zEV2pIFNkCSJiSUWRWyDKGzl6NhlBOVNC5xQhZF8JfaU98LhUHPLgZhtsC8JrW3PQGCAGnPA7ukCuySKkhePyKf1iNyujFhlpVDYdClxRA6M+dUTIm2gSDkUBhEDnbiWpHDEQT2vA+hrUuk/nLGvL8m7XlmqlCfO0aOcCAtxlRHEVo6wTVcTH2TpsEuWQTTggpNzyNYE5iKEpgWzoE4NAJpJJptL/YPQ+jphzSSudjKVGlLWMxTotYDEDXe+ne+BdEzAAAkKXn9tsDr+xHa/xFkXnu1n1SWeK0oxWWzy6+F/aGNhvgkyQIHbFvugnn18piLaipsANS0Fdq7s26bS7j6JvhffCM+gzqfxmhRj8ipRvAtHbCsWwWmvET96CpitjLBt4x7DRIELLfdBDYHBUbMNy4BVeBA4K0PDN+A5JocJJSoQuZ5hPZ9BK4x6e1CJWiD5PUj8PLboEuLYV59PehZ2Vt3CdqYGUvsG0z61lpvXw3TtQsMGT8VzIIK5FEkAq/tT7mwn6rIEQ6S1w/SoT/pQi1ibz8Cb36gGNGbcpqhigrAn28Cf/4iKOcMMPMrMpbYURNlmg6hPbobGtshUTOdxtXgTAMztwyW225CaN+HsWtqdmlq2xvVVhwamVjFGs07CB85Gd2VpoCtqQIJIJLUd9SFIHT2Irj3ILy/egGB1/eDq2+C5FNYWGoM+B8P39oVk4GpKJ0QpRqDva4y4Xlq3C5q2xuW0TOoqsqOLuQIh+DeA9EiLApKBQByMCwSHpd7AEDh+Jtp6w3Y80A5p4MqKgRZ4ABVWBDNCNGLKGLkqRcgCwII1gTHYw+AMGinmS0yx0crA44mjU5Fl048bM0i1XFTqpEkhI+fRuTMOci+rJJpB2lEi8AmaUW6X1jyBSD5ArHdm1FJqkJ3H2QhujM1r6qZcKUCAMLEwLJmBQJvvAdgarp04slF1nQ8Qk8fQu8ehtifPg1wHCM0gF4Ac3IjljrGQjrIAgfYJVUZWucOZkEF6OIiCD19kyZDtsj+lDVX9Y8bCiN06GNV/to4emlTZUWeHOEMXWxqReiOWpzNNy6ZlKrB8bArl0F45e3U96aAS2esreEmElGC0N0LobUDciCz0irI3EGShfmE0YtNTcgyRM8ACDM7JUooMhUlihEAk7FIV2orZmGlzxbuXDO8z+0Ed/YcyAK7Hpk7adLhaDJVL1gc6j+W1oajJttEC+LQCGSOB7us2rAdpl5Mi+YjfPiTpOsTnCmUtq0RMxZ/oQXhY6cg9g1Gx/b69cp8gZQj3EG2ZtFodZP0NTFzpVRANMULAJgF+pd7Yv+QIVZp00JlWaaCS0cOhtWHFsUhDgzB9/zLCLzxXkyptMoxjgZa5vi3gWhNK/ufbEHk2CmEPzmrKoFBj49xDLGnH4SZVWXtT0Xo/SOInGgAEE15st55s+b1GplvBzktX21F5ssGORSBOJg5p0AD9aTjkXtPycGQCERDXs2rl8Px5a0wr1gCwpyUBJyaNMaybBF6+0GXzNS1aI+cbIgpFQBwDU0If5S6onK2MBMQGDdZ5Mhi3+2sq+2hAUAc8npoqyUW/ExaLTCvWg7zTTUQOnrAX2yF0OWBODCcpERjuwJZEHS5daTBYTDzyzM3VEAWRIidyd7+8MdnYFpcqbn0tWnRPEg+lS6dET/41u60XzjDdos6voikPQ9sTRWkIa+RO9ajwKivUPIHPgWQHFVPEKBnz4oF3MuiCGloBFIgBNkfhMzzoKY5QNjyAEm781by+iELIqgi7ZVqJK8X4nCKk0xECdyZ8zCvqtE0LlngUNwdETQNsjAf1PQCUNOngS6bBbLAAYKmEdr/UdojWOQIB3ZJNSInG6JRoOlcJGkCAAmTjjhNggBdXIRwR2/GpiqCEA8CY05oXvgVgI0Z5aAoUDMKQaXIQpR8Ac2/pDgQterqmZrDR04q1pXgL7ZpViwQZGxc0mEDXVIMelYRqFlF0ZICSuUGMpRz4uqbwS5bDOtda2BZuwpCZy+Ejh4I7V1RK3fcDj3tblGnvS/SeCljcb2MMiSyGxhVLNuWO18Jf3yWIx027YWUBO0L+LHFsR7FElqVp2dxcFjzq5pgTbDe+QXQJTNVZXpTMzL7ToWuXlBFhSBMDJg5pWDmRPP+5Ag3qmTdEDp6IA4MKf5Bs14HK6DmM8lCqRqddbXngbiwGaHb847JYcs4ayk+VEf6lzgQ3ZlojemSg6H0225ZhjTi01y0xLRI/eEVZNHobJbGNigNpY5lIlgTmHllYOaVARhN3O3oAT+qaPExUHqLqhl8iNavx/4TUyxp2PtNmRc2aj7aTMfOUBry6vqAsrHlyGHt9h4tEBQFqjA/9qVJhaxQGzRpLKsFzMI5YEbtapI/CKG9C0JHj+4dOZFnmGKFADw99kNMixw7NjcH9h48y8yZremcXVlH5CVdNhOkTXskg9Kz43cywMRHhlJFhaDLihV3U1rP0SFtVpiq58NUPR9CWyfkcETzK5FMoVhadqxi39C7hd/5bzEra4LvRBoceVxrciehdREpyyAdebp8XoQp9WwX78fSko6uF6poelr/nyEyCYKudRZhSVYstT5LsjAfcij8V/HXE9579ofvOR7Y88ERZn75StUSaszSkfwBhA6NVprTmIBJ5llAUFRSxnP8TmYy4sKpokKEDhxT3E0ZcqwcqS/XIJVSqvVZEq3dvyj6l28nnP2Y9FcU+wa3y+GI6veG0qyRCckbiP0CCuc5Z/FwIrpYTsGYUundPWlhzOSg9AeiZuivgKg3GJJU+FxU+AoH5FDkfySNO/6C40v3X+Kb236jRjggGjqrBSkuUE2zYgHKpaKRXL5HFTrWjgRrUp6VRo3PepB5XvMXOiaGWXt/wmoBXV7yf5x1tYPj76V878ih8BPSsDcpySLtQ2hKk/VdDn32mDFDqRbYpdVg5qbOhzQtTjqRI2v0hv4qeRMsa2/UPYvyF1pB5ut7xRMWM5iKzGdxsTVVYJdVxtoyFSXIW3/LAD2r6Eep2qdULPvDm0S+rfMv1G5lpZD6IMD482LEHu2hLgRrAj0r2WHMLKjQleghBwNjaeOaoJypn63HfTUGf6HFkKIgMpfZuD22oJd5AdbbV8O6aR1Ez8Bjjh2bUyqJolT2Bzf8yvdfr9UG3ngPkRMNEHv7M9qLtNiK5PBnM5bQldlnlQ5TzaKE1ws1Yxqst6/WNWboo5MIvntYc/9UCkQWOEAX6yvyI7R1qTwqXplsakVwjS0QPMPI23gbTIsXgm9qfcW+fdPrSu3TWkPFvsHvi32Dt/IXWtaNXSPMLMh8OwgTE/3HMNHMGkmCqXKu6roKUtyMJXn9EAeGNddmICgKtvvvBFffBFkQYVq8QFfEhRwKR11Fsgy+uQ3M3DLVY6SaLS1x9SK0Ej52SlMd0pSYaCDN8paePQuWL9wQ24yInoEhgiQfVO6RQbGcdbWyx+V+HMBJANOA6AwjhlMvv8gCR8w6nC3yuLH4i636in6QpK41VaIsbbHFe+TTek2KRdrzQJjZ2O/JzCvTVZUYiM5WQkePYbUsUtrTSBLMvDKYl18LKk6B5XBE5ls6NzgevTetwTPjC9pZV9sO4FFkYbrWlJU7Lmabq29SaDjxxKc+jTmDtTA2a5EOW+wAST2ERuPwM0VQZEssKoUkQZfMhGXNCuT/2UPI27g2QakAgDt/qdbx6L0Zz1/Jyrr2L0ffa/ruo48tY8qKq0gzO+oiSYEkga3JeBpbAnIkDKrQgbFx5QgXDUnJYY3MbBD7BqOp5HGQZrMmEwHBMiBkKXpMn05DLX/+EiInGsDecC1MC43JZiKsFrCLF8KydiXY6ypBzypKOYvxF9sO2e5b93g2Y2a9pZBDkS8SLDOQzswvef1ZO1ZjfQLBJPdB5KMTqsbIBeEjyTJoPU+ZKioEu7Imq1CadMi8gNCB6LEnugL8xsFUlIAuLU5b+EXs6RsU+wfXKTYYR9aKVfjtr/ORE+erxL6htO8qlanY4JvaETp8IiHYTOjpUywVORGIPf0plUgcGFIs25MO0m435JyhyNGTn9nV+Imr5SX5Ajzf1rXCsWNz1tt+VUaQoh9/px/AvYjWe0iJ6EkywmYklfsg9N6Ryal2LMsI7v9Q8bbQqc8kohWxfzCaPTUKVTIxJSJljpf5C5e2OB69T6F2Z2pUW9ecdbWNALYBSPmVEfu0GxPjkbx+hA8cN2QsNYSPnU5rEJ2Ueg6ShODeg5/FXhFEzg91BwDIMriGpn+wb7tH0V6lhCazrbOu9i2MHv8x3tSvx0odD1tTBRDROgIThdDZm5AuNv53AwCxe+IVS2jvAl1SFJODmjHN0DWWElzDxeftWzf8UEtfzf4AZ13t0wDc42N3xIHhWCkiPYyNGz5wLFYsJJeIg8MIvPpugtM5VVxSNH5+4l7RQlcvuHMXE+SYiErJfFPrB7bNt39Ja39djiZnXe3/5BpbnklYfEuSuvR2hTgurrEFocMnIHT3I/DKOzlVLnFgCIFdbye5rMZkSMhiGY2fnwjkcATBPR+Aa7iUIAddltlprAe+tfM8M798rZ4xjKi+8VU5GN4Vf0FQ8bpIl0AxtqiXIxwCO/fqOs1dCaG9G/7/tychfCeVDPFI3glQLFlGYM/7MbliclAk6Nm5y84WOnu6xJ6+60wLynXFcutWLGddrQjgYQBvjl0TVcwu2YbnyoKAwBvvRevRa4wVTxhPFBE+/An8u/aqLqyRjdNWL6H3jyacLTgGPcuZszBrsbd/QOjoqVRjVlDCkHpBzrpaDsCDAPYDiB0MnhUqSxZFTjXC9+xOcGfOayvhI8vgzjXD99yu6GmlGgL5cj1jRU42RDOkU6CpBn8WiL39w3xLR5Vjx2ZDvjWGVf131tUGPS73FgB7TdVzVkj+AEhb5phuU/VcUNMdqkte8xdbEPrwU7CL5oOeV5bR0y/2DYK/2Aau/kLKSFU1mSlKMVZGIPb2QRh/gEIcdIXxiiX2DwW4+qbq/K9uM+xEAuOOkwDgrKsd8bjcd0le/3E5EpmPLBSLzLOCKJ2FSH925XTiawjIwRDCx08Dx0+DYGiQ06eBctgA1gQCADkjH6Q9D5HjZyB0pV/3qT1MKRcI3b2QhoYUs2NIe55ut9B4xP5BL9/csTj/q9t6jBw3J4U+PS631XRd5XHrulXVavpFi454o66T/iGI/UMQevuT/pCTfZoqXVoM24MbshozW7gz5xHc9yEIC6soA7u0Gpa16hOolBA9A0P8pfaFjh2bDT87JWcVZEf+86VCU9XcJsqp30kmDXshdHkgdHsgtHXFHwY0KVBFhbA/cp9h44WPnkyKpEiF7cENhh1kmUulAgx+FcaT/2dbB72/faVMFsQL9DVOXZ8GWeCAqcARq6EgDXvBt3ZGA97auibUYAloz2BOQpIQfPdwVjFohMUcLUxnAEJXb4/Y3bfQsWNzznYhOVMsAHDs2Oz3vfRmBUSxnp49y7BSyGSBA2yBA+zSasiCAGnYC7F/EMKldnDnW9P2NaTgmQEHOckcB+7sOcjBzFlAbE0VqJlFhpQoF9q6moVuT7URJoV05Lw8sX3rhojQ1buAb27TV7NRAYKmQc0ohKlqPqzrb0XefbfDVDlX0daTq/LYahA6exA+dByEiclaDiPcOHxz+wmh27Mg10oF5HCNlQr/a/tfNVXO3TQRz5JFEXxTK7j6puiBkXGzjN4FPemwwfGnWzXJFfnkLEKHPgYkKWs5CIsZ+V/Zpv145Kjt7hXbvevu1zaAeib8+Af/y+/81FQ178mJrOUu+YPgGprAnb1giJ+PnJYPx5e2qOojB0MIvn0QfEun6uexS6pgue0m1f2A6BeMq2/6if2Bu/5a0wAamZRzRXwv7vmGadH8fyNY04Q/X2jrQuT0OfDN7ZprS6ndFfKX2hF8+5Bm+5ftixs1xV/J4YjM1Td9075t4y80PVgHk3Zgje8Pb9zOzCt7g8y36ys+oBHJFwB3qhGRM+eTUtAyka1iyRyP0IFjUfeTRrS+dqURH8dfbNto37bxXc0P18GknoTke+G1Mnru7AaqsMA6WTLIggi+8SLkSBiSP5DVbtGydgXYpemzkfhL7Qjt+xDMgjJdu1DziiUwr1qu6ncSunr7hPbu5Y4dmztUdTSQST20xr59U5vQ3DZd6PZMTiA5omE7psULwV6/BOwNS0HmZ5F2lsbcIAfDCL75AQK734XkD+rehao9YZa/0HKUa7hYMplKBUzyjBWPf9fbP2Wq5j5p1NnSehAHhhA5fgbc+Usp12GmaxfAesfNiRdlGZFTjQh/+GlSGI7WXShdMhO2rXdn1U8WBPDnLv3Mdv8df5lVhxwzZRQLAHwvvrGZmVv24mStu8Yj+QKIfHIG3JkLCeHW7PWLYfnCDbGfhc5ehN4/knTQkV6sd90CU3XmGUsa9nJ8c/tD9m0bdxsqgA6mlGIBgPe3rxTTJcVH6NJi9YUScoQcjiDyyVlETjVCjnAwr14O841LIHn9CB08npPIVoI1wfGVbRlLlAutnZeEzt5Vjse2TNpyIhVTTrHG8L+671lmfsWXtNZ+zwVyhAN3+hxAENHZ7Mw54084HYVdWgXLWmXblSwI4Bubf23bcueXcyKATqasYgGAb+dbjzHlpf9BOmwTX/JYATkcge/3u3UHC2Zqa3/0PsXYK3FwOCS0dj1k/+LdqvP9JoqpcZSpAvYH1j/Lnbvo5JvbPzLC8WsEgT3vK9ZKNcoPSc2ckVqpZBn8hZZD3MlG51RWKmCKz1jx+F7c8xVmXtkvJ3P2ipxqRGj/R2nbGBFYmGrRLnn9PN/U+nX7to3PZC/x5DGlZ6x47F+8+2muoekavrl9UkrRyMEQwoc+zqKdvmN6Cas56chgvrn9BNfQdM3lolTAZTRjxeP741tPMnNn/4i05U2Y0Sv4zqGEQmy5wrxiadwLerYAAAPLSURBVOwIPMkfEPiL7X9j37r+5zl/sMFclooFAL4XXiuligrfpstLqnL9LGnEB+9zu2LGUiMX6Qltl1fDvLIGhMkEvqWzXuwbWOd45N4pZUbIlsvmVTge+/ZNHdY7VldHTjX+UMtJGmoIHzuVYIHPVbAgmW8HSApc/YWf5925+trLVamAy3jGisf3hzdq6NLidyjndMMT/uRgGCPPvJhkr8pF9o/ltpuaZY5/2LF90zFNwk4hLtsZKx77to2f8pfaZ3Lnmt8x2iwROZs641rvIn0cEoDvyaFw5edBqYDPyYwVj++lN580LZzzr4TFbMiXxvvsTk3lIVXQDWC7s672/Vw+ZKL5XMxY8di3bvgZV990vdg/qFsbxP7BXCvVAQDLP29KBXwOZ6wxvL99xUoVTT/MzJ29VOsYQmsH+JZ21XUlsmnPLCx/T/YH7y787p/nJl9/kpn84Kcc4dixOQhgmX/3u8+YKuf+qZbDjISuHlAzpmVVzwHIuv4DD+Br0/7i8V+na3S587mdseLxvfTWN0yVc35OmNns69oHQxj5jz+o2v0BGXeA/QC2OOtqD2Y94GXK526NlQr71vW/iJw+t1Ya8WWdqDlW40uNUmVo3wBgxZWgVMAVolgA4Hjk3gP8xdYqsS+7Rb3BNU8PALjZWVd7ychBpzJXjGIBgH3bPZeE1s4yobMnY6KBmKYqYaoy3UqYqipO07OLNzrrarUfH3sZckUpFgDYt28aETp65vEtHfXp2okDyoXgVLhpnpL8oesLv/W1ya27NAlcEYv3VHAXWgm+ue0wM7csKf5X8vnhfealtP2zWNT/k7Ou9rs6xbxsueJmrDFMC8rlvPW3rOIvtOwdf0/M4tzFDEr1nStZqYArWLHGyNt463ruXPNb8dd0Vgz8jrOu9p/1SXX5c8UrFgDYNt22gTvXHJu5ZO2K9b2rShXlqmKNYtt023q+ue0IgNiZgGp2fwD+t7Ou9h9zKOJlxVXFioOZW7ZKaO08L4dHj1rJfvf3n8662m/nXMDLiKuKFYdpQbks9PRdJ/YNvgkoHNKUzGsYPWLvKp9xxZob0uFxufMAHASwLEPTEwC+4KyrTZ1oeAVzVbEU8LjcZQCOAlCqKtuLqO9P2wnkn3OuvgoVGFWY7UhxRDFbUyUzFdf8w1WlUuaqYqXBWVe7H8D/Gn9dHBz5/bS/feLpSRDpsuGqYmXmBwDiExyOC63dj0+SLJcNV9dYWeBxuWsAHB/98QZnXW1ODkO4yhWIx+V+zuNyPz/ZclwufG5j3nPALydbgMuJ/w9pNsq7LBKGMQAAAABJRU5ErkJggg==" alt="=LOVE heart">
-    <h1>=LOVE 21作コンプリートクイズ</h1>
+    <h1>君は＝LOVEを愛しているか</h1>
     <p class="home-sub">MVのサビを聴いて曲を当てよう！</p>
 
     <p id="loading-msg">YouTubeの準備をしています。少々お待ちください。</p>
 
     <div id="mode-select" style="display:none;">
-      <button class="mode-card" onclick="initGame('singles')">
+      <button class="mode-card" onclick="showSinglesSubmenu()">
         <span class="mode-icon">🎤</span>
         <span class="mode-text">
           <span class="mode-label">表題曲クイズ</span>
@@ -134,6 +157,24 @@
           <span class="mode-desc">通好みの収録曲から出題</span>
         </span>
       </button>
+    </div>
+
+    <div id="singles-submenu">
+      <button class="mode-card" onclick="initGame('singles')">
+        <span class="mode-icon">📋</span>
+        <span class="mode-text">
+          <span class="mode-label">スタンダード</span>
+          <span class="mode-desc">8問構成で正解数を競う</span>
+        </span>
+      </button>
+      <button class="mode-card timeattack" onclick="startTimeAttack()">
+        <span class="mode-icon">⏱️</span>
+        <span class="mode-text">
+          <span class="mode-label">タイムアタック</span>
+          <span class="mode-desc">10秒で何問答えられるか（曲は流れません）</span>
+        </span>
+      </button>
+      <button class="btn" style="background:#aaa;" onclick="backToModeSelect()">← もどる</button>
     </div>
   </div>
 
@@ -191,21 +232,30 @@
       { title: "夏祭り恋慕う", videoId: "8VBDO8ZQyDo", chorusStart: 55, parentNumber: 9, parentTitle: "ウィークエンドシトロン" },
       { title: "祝祭", videoId: "m8WtzVPXxwU", chorusStart: 55, parentNumber: 9, parentTitle: "ウィークエンドシトロン" },
       { title: "お姫様にしてよ！", videoId: "oCb89c0MDVk", chorusStart: 55, parentNumber: 10, parentTitle: "The 5th" },
+      { title: "Poison Girl", videoId: "2l7yxbJ2Eqc", chorusStart: 55, parentNumber: 10, parentTitle: "The 5th" },
+      { title: "BPM170の君へ", videoId: "TCTylb6qGdw", chorusStart: 55, parentNumber: 10, parentTitle: "The 5th" },
       { title: "笑顔のレシピ", videoId: "LKwERkGBiog", chorusStart: 55, parentNumber: 11, parentTitle: "あの子コンプレックス" },
       { title: "知らんけど", videoId: "IplzPaWoFXo", chorusStart: 55, parentNumber: 11, parentTitle: "あの子コンプレックス" },
       { title: "僕のヒロイン", videoId: "AJ1GQ-iLyEM", chorusStart: 55, parentNumber: 11, parentTitle: "あの子コンプレックス" },
       { title: "わたし、魔法使い", videoId: "nqgFDf46MZI", chorusStart: 55, parentNumber: 12, parentTitle: "Be Selfish" },
       { title: "真夜中マーメイド", videoId: "qzFBzJ2KWwY", chorusStart: 55, parentNumber: 12, parentTitle: "Be Selfish" },
       { title: "Kiara Tiara", videoId: "WB30LnBxwfk", chorusStart: 55, parentNumber: 13, parentTitle: "この空がトリガー" },
+      { title: "Junkies", videoId: "POBlJq_P8os", chorusStart: 55, parentNumber: 13, parentTitle: "この空がトリガー" },
+      { title: "ラブクリエイト", videoId: "11SXnMJKljk", chorusStart: 55, parentNumber: 13, parentTitle: "この空がトリガー" },
       { title: "だからとて", videoId: "zKkx-rtOIPo", chorusStart: 55, parentNumber: 14, parentTitle: "ナツマトペ" },
       { title: "ヒロインズ", videoId: "B2teLF9l4aI", chorusStart: 55, parentNumber: 14, parentTitle: "ナツマトペ" },
       { title: "ラブロケ", videoId: "u_Y91a-uILM", chorusStart: 55, parentNumber: 14, parentTitle: "ナツマトペ" },
       { title: "ドライブ デート 都内", videoId: "Y3aRUM8ebKE", chorusStart: 55, parentNumber: 15, parentTitle: "ラストノートしか知らない" },
+      { title: "狂想カタストロフィ", videoId: "RG_B3gfOzLo", chorusStart: 55, parentNumber: 15, parentTitle: "ラストノートしか知らない" },
+      { title: "どこが好きか言って", videoId: "Mdsq8dUNvrI", chorusStart: 55, parentNumber: 15, parentTitle: "ラストノートしか知らない" },
       { title: "君の第3ボタン", videoId: "xmo-UbsUZE4", chorusStart: 55, parentNumber: 16, parentTitle: "呪って呪って" },
+      { title: "誰にもバレずに", videoId: "E4PVynHrfp8", chorusStart: 55, parentNumber: 16, parentTitle: "呪って呪って" },
       { title: "仲直りシュークリーム", videoId: "D0SfIi-0Zpo", chorusStart: 55, parentNumber: 17, parentTitle: "絶対アイドル辞めないで" },
+      { title: "海とレモンティー", videoId: "i024yWd9oiI", chorusStart: 55, parentNumber: 17, parentTitle: "絶対アイドル辞めないで" },
       { title: "超特急逃走中", videoId: "d20dEAtbL08", chorusStart: 55, parentNumber: 18, parentTitle: "とくべチュ、して" },
       { title: "恋人以上、好き未満", videoId: "p-jc9qMpBb4", chorusStart: 55, parentNumber: 18, parentTitle: "とくべチュ、して" },
       { title: "Queens", videoId: "Pyts1pc0u1A", chorusStart: 55, parentNumber: 19, parentTitle: "ラブソングに襲われる" },
+      { title: "木漏れ日メゾフォルテ", videoId: "4xBmuiQNGdc", chorusStart: 55, parentNumber: 19, parentTitle: "ラブソングに襲われる" },
       { title: "お姫様の作り方", videoId: "2udLA8-QuD8", chorusStart: 55, parentNumber: 20, parentTitle: "劇薬中毒" },
       { title: "モラトリアム", videoId: "ZROuG57QGls", chorusStart: 55, parentNumber: 20, parentTitle: "劇薬中毒" },
       { title: "夏名残サマーチューン", videoId: "_Bm66BRnM1A", chorusStart: 55, parentNumber: 21, parentTitle: "恋、はじめました。" },
@@ -213,6 +263,13 @@
     ];
     const QUESTION_COUNT_SINGLES = 8;
     const QUESTION_COUNT_COUPLING = 8;
+    const QUIZ_BOX_TEMPLATE = `
+      <h2 id="question-number"></h2>
+      <p id="question-text"></p>
+      <div class="choice-container" id="choices"></div>
+      <div id="result"></div>
+      <button class="btn" id="next-btn" onclick="nextQuestion()" style="display: none; background: #4caf50;">次の問題へ ➔</button>
+    `;
 
     let currentMode = 'singles';
     let currentPool = allSingles;
@@ -222,6 +279,14 @@
     let correctCount = 0;
     var player;
     let stopTimer;
+
+    // タイムアタック用の状態
+    let taTimer = null;
+    let taSecondsLeft = 0;
+    let taAnswered = 0;
+    let taCorrect = 0;
+    let taActive = false;
+    let taCurrentQuiz = null;
 
     // YouTube IFrame Player APIを正しいURLで読み込む
     var tag = document.createElement('script');
@@ -244,11 +309,26 @@
       document.getElementById('mode-select').style.display = "flex";
     }
 
+    function resetQuizBoxDOM() {
+      document.getElementById('quiz-box').innerHTML = QUIZ_BOX_TEMPLATE;
+    }
+
+    function showSinglesSubmenu() {
+      document.getElementById('mode-select').style.display = "none";
+      document.getElementById('singles-submenu').style.display = "flex";
+    }
+
+    function backToModeSelect() {
+      document.getElementById('singles-submenu').style.display = "none";
+      document.getElementById('mode-select').style.display = "flex";
+    }
+
     function initGame(mode) {
       currentMode = mode;
       currentPool = mode === 'coupling' ? couplingSongs : allSingles;
       questionCount = Math.min(mode === 'coupling' ? QUESTION_COUNT_COUPLING : QUESTION_COUNT_SINGLES, currentPool.length);
 
+      resetQuizBoxDOM();
       document.getElementById('home-screen').style.display = "none";
       document.getElementById('quiz-box').style.display = "block";
       document.getElementById('home-btn').style.display = "flex";
@@ -261,13 +341,89 @@
 
     function goHome() {
       clearTimeout(stopTimer);
+      clearInterval(taTimer);
+      taActive = false;
       if (player && typeof player.stopVideo === 'function') {
         try { player.stopVideo(); } catch (e) {}
       }
       document.getElementById('quiz-box').style.display = "none";
       document.getElementById('home-btn').style.display = "none";
+      document.getElementById('singles-submenu').style.display = "none";
+      document.getElementById('mode-select').style.display = "flex";
       document.getElementById('home-screen').style.display = "block";
     }
+
+    // ===== タイムアタックモード（10秒で何問答えられるか。曲は再生しない） =====
+    function startTimeAttack() {
+      currentMode = 'singles-timeattack';
+      resetQuizBoxDOM();
+      document.getElementById('home-screen').style.display = "none";
+      document.getElementById('quiz-box').style.display = "block";
+      document.getElementById('home-btn').style.display = "flex";
+      document.getElementById('next-btn').style.display = "none";
+
+      taSecondsLeft = 10;
+      taAnswered = 0;
+      taCorrect = 0;
+      taActive = true;
+      clearInterval(taTimer);
+      taTimer = setInterval(() => {
+        taSecondsLeft--;
+        if (taSecondsLeft <= 0) {
+          endTimeAttack();
+        } else {
+          updateTaHeader();
+        }
+      }, 1000);
+      loadTimeAttackQuestion();
+    }
+
+    function updateTaHeader() {
+      const el = document.getElementById('question-number');
+      if (el) el.innerText = `⏱️ 残り ${taSecondsLeft} 秒`;
+    }
+
+    function loadTimeAttackQuestion() {
+      taCurrentQuiz = allSingles[Math.floor(Math.random() * allSingles.length)];
+      updateTaHeader();
+      document.getElementById('question-text').innerHTML = `<span style="color:var(--pink-dark); font-weight:bold;">${taCurrentQuiz.number}th シングル</span> は何でしょう？`;
+      document.getElementById('result').innerText = "";
+
+      let choiceTitles = [taCurrentQuiz.title];
+      while (choiceTitles.length < 4) {
+        const r = allSingles[Math.floor(Math.random() * allSingles.length)];
+        if (!choiceTitles.includes(r.title)) choiceTitles.push(r.title);
+      }
+      choiceTitles.sort(() => 0.5 - Math.random());
+
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = "";
+      choiceTitles.forEach(title => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerText = `『 ${title} 』`;
+        btn.onclick = () => checkTimeAttackAnswer(title);
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    function checkTimeAttackAnswer(selectedTitle) {
+      if (!taActive) return;
+      taAnswered++;
+      if (selectedTitle === taCurrentQuiz.title) taCorrect++;
+      loadTimeAttackQuestion(); // 曲は流さず、すぐ次の問題へ
+    }
+
+    function endTimeAttack() {
+      taActive = false;
+      clearInterval(taTimer);
+      document.getElementById('quiz-box').innerHTML = `
+        <h2>⏱️ タイムアップ！</h2>
+        <p style="font-size: 20px;">10秒で <strong>${taAnswered}問中 ${taCorrect}問正解</strong>！</p>
+        <button class='btn' onclick='location.reload()'>もう一度遊ぶ</button>
+      `;
+    }
+    // ===== タイムアタックここまで =====
 
     function loadQuestion() {
       clearTimeout(stopTimer);
