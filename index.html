@@ -124,6 +124,7 @@
     border-radius: 14px; padding: 6px 10px;
   }
   .mode-card.timeattack { border-color: #ffb020; }
+  .mode-card.introdon { border-color: #4a90d9; }
   #singles-submenu { display: none; flex-direction: column; align-items: center; gap: 12px; margin-top: 8px; }
 </style>
 </head>
@@ -155,6 +156,13 @@
         <span class="mode-text">
           <span class="mode-label">カップリング曲クイズ</span>
           <span class="mode-desc">通好みの収録曲から出題</span>
+        </span>
+      </button>
+      <button class="mode-card introdon" onclick="initGame('intro')">
+        <span class="mode-icon">🎧</span>
+        <span class="mode-text">
+          <span class="mode-label">イントロドン</span>
+          <span class="mode-desc">1.3秒のイントロだけで曲を当てる</span>
         </span>
       </button>
     </div>
@@ -433,7 +441,9 @@
       document.getElementById('question-number').innerText = `第 ${currentIdx + 1} 問 / 全${questionCount}問`;
       document.getElementById('question-text').innerHTML = currentMode === 'coupling'
         ? `<span style="color:var(--pink-dark); font-weight:bold;">${currentQuiz.parentNumber}th シングル『${currentQuiz.parentTitle}』</span>のカップリング曲は？`
-        : `<span style="color:var(--pink-dark); font-weight:bold;">${currentQuiz.number}th シングル</span> は何でしょう？`;
+        : currentMode === 'intro'
+          ? `<span style="display:block; margin-bottom:10px;">🎧 イントロを聴いて、曲を当てよう！</span><button class="btn" id="intro-play-btn" onclick="playIntro()" style="background:#4a90d9;">▶ イントロを聴く</button>`
+          : `<span style="color:var(--pink-dark); font-weight:bold;">${currentQuiz.number}th シングル</span> は何でしょう？`;
 
       document.getElementById('result').innerText = "";
       document.getElementById('next-btn').style.display = "none";
@@ -458,16 +468,49 @@
         btn.className = 'choice-btn';
         btn.innerText = `『 ${title} 』`;
         btn.onclick = () => checkAnswer(title);
+        if (currentMode === 'intro') btn.disabled = true; // イントロ再生が終わるまで押せない
         choicesDiv.appendChild(btn);
       });
 
       // 動画の先読みは選択肢を出したあとに行う（失敗しても選択肢表示には影響しない）
+      // イントロドンは曲の頭(0秒)から、それ以外はサビの位置から先読みする
       try {
         if (player && typeof player.pauseVideo === 'function') { player.pauseVideo(); }
         if (player && typeof player.cueVideoById === 'function') {
-          player.cueVideoById({ videoId: currentQuiz.videoId, startSeconds: currentQuiz.chorusStart });
+          const startAt = currentMode === 'intro' ? 0 : currentQuiz.chorusStart;
+          player.cueVideoById({ videoId: currentQuiz.videoId, startSeconds: startAt });
         }
       } catch (e) { /* 動画の準備に失敗しても問題の表示は継続する */ }
+    }
+
+    // イントロドン：再生ボタンを押した瞬間から1.3秒だけ曲の頭を再生し、再生中は選択肢をロックする
+    function playIntro() {
+      const currentQuiz = currentQuestions[currentIdx];
+      const playBtn = document.getElementById('intro-play-btn');
+      document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+      if (!player || typeof player.playVideo !== 'function') {
+        document.querySelectorAll('.choice-btn').forEach(b => b.disabled = false);
+        return;
+      }
+      clearTimeout(stopTimer);
+      if (playBtn) { playBtn.disabled = true; playBtn.innerText = "🎧 再生中…"; }
+      try {
+        player.unMute();
+        player.seekTo(0, true);
+        player.playVideo();
+      } catch (e) {
+        document.querySelectorAll('.choice-btn').forEach(b => b.disabled = false);
+        if (playBtn) { playBtn.disabled = false; playBtn.innerText = "▶ イントロを聴く"; }
+        return;
+      }
+      stopTimer = setTimeout(() => {
+        if (player && typeof player.pauseVideo === 'function') {
+          try { player.pauseVideo(); } catch (e) {}
+        }
+        document.querySelectorAll('.choice-btn').forEach(b => b.disabled = false);
+        if (playBtn) { playBtn.disabled = false; playBtn.innerText = "🔁 もう一度聴く"; }
+      }, 1300);
     }
 
     function checkAnswer(selectedTitle) {
